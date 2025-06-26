@@ -1,0 +1,604 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CFA vs CPA: 你的金融职业道路指南</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <!-- Chosen Palette: Warm Neutral (Calm Beige, Deep Slate, Muted Gold Accent) -->
+    <!-- Application Structure Plan: The SPA is structured to guide a student's decision-making process, not to mirror the report. It starts with a high-level visual summary ('At a Glance') to provide immediate context. The core is a tabbed interface ('Deep Dive') allowing users to explore specific areas of interest (Careers, Salary, Effort) at their own pace. This is followed by a section summarizing CFA's key advantages ('Why CFA?') using interactive cards. The flow concludes with a clear recommendation, now enhanced with LLM-powered career path brainstorming and study plan assistance, offering practical, AI-driven insights to users. -->
+    <!-- Visualization & Content Choices: 
+        - Report Info: CFA & CPA salary data. -> Goal: Compare earning potential. -> Viz: Interactive Bar Chart. -> Interaction: Buttons to toggle between 'Average Salary' and 'Senior Role Salary' views. -> Justification: Bar charts provide clear visual comparison of financial data, which is a key decision factor for students. The interaction adds depth without clutter. -> Library: Chart.js (Canvas).
+        - Report Info: Study hours, costs, pass rates. -> Goal: Compare required investment and difficulty. -> Viz: Horizontal Bar Chart & Stat Cards. -> Interaction: Static display. -> Justification: Simple, direct visualization for comparing effort metrics. No interaction needed to avoid over-complication. -> Library: Chart.js (Canvas) for bars, HTML/CSS for cards.
+        - Report Info: Core functions (investment vs. accounting). -> Goal: Inform on fundamental differences. -> Viz: Side-by-side comparison with icons. -> Interaction: Static. -> Justification: Quick, scannable visual summary for initial understanding. -> Library: HTML/CSS with Unicode icons.
+        - NEW: User interest. -> Goal: Generate relevant job roles for CFA/CPA. -> Viz: Text output. -> Interaction: Text input and button click. -> Justification: Provides personalized career guidance. -> Library: Gemini API (gemini-2.0-flash).
+        - NEW: User study hours and target date. -> Goal: Generate a high-level CFA study plan. -> Viz: Text output. -> Interaction: Text inputs and button click. -> Justification: Offers practical academic support. -> Library: Gemini API (gemini-2.0-flash).
+    -->
+    <!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
+    <style>
+        body {
+            font-family: 'Noto Sans SC', sans-serif;
+            background-color: #F8F7F4;
+            color: #2c3e50;
+        }
+        .chart-container {
+            position: relative;
+            width: 100%;
+            max-width: 700px;
+            margin-left: auto;
+            margin-right: auto;
+            height: 300px;
+            max-height: 400px;
+        }
+        @media (min-width: 768px) {
+            .chart-container {
+                height: 380px;
+            }
+        }
+        .tab-btn {
+            transition: all 0.3s ease;
+        }
+        .tab-btn.active {
+            color: #c0a062;
+            border-bottom-color: #c0a062;
+        }
+        .tab-btn:not(.active) {
+            border-bottom-color: transparent;
+        }
+        .card-advantage {
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        .card-advantage:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.07), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+        }
+        .fade-in {
+            animation: fadeIn 0.5s ease-in-out;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .loading-spinner {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #c0a062;
+            border-radius: 50%;
+            width: 24px;
+            height: 24px;
+            animation: spin 1s linear infinite;
+            display: inline-block;
+            vertical-align: middle;
+            margin-right: 8px;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body class="antialiased">
+
+    <div class="container mx-auto px-4 sm:px-6 lg:px-8 py-12">
+
+        <header class="text-center mb-12">
+            <h1 class="text-3xl md:text-5xl font-bold text-[#2c3e50] tracking-tight">你的金融职业道路</h1>
+            <p class="mt-4 text-lg md:text-xl text-[#606f7b]">CFA vs. CPA: 为你的未来做出明智选择</p>
+        </header>
+
+        <section id="at-a-glance" class="mb-16">
+            <h2 class="text-2xl md:text-3xl font-bold text-center mb-8">核心定位速览</h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-4xl mx-auto">
+                <div class="bg-white p-8 rounded-xl shadow-md border border-gray-100 text-center">
+                    <div class="text-5xl mb-4">📈</div>
+                    <h3 class="text-2xl font-bold mb-2 text-[#c0a062]">CFA (特许金融分析师)</h3>
+                    <p class="text-lg font-semibold mb-4">投资决策的战略家</p>
+                    <span class="inline-block bg-[#eaf2f8] text-[#2c3e50] rounded-full px-4 py-1 text-sm font-semibold mb-2">#前瞻性</span>
+                    <p class="text-[#606f7b]">专注于投资分析、资产估值和投资组合管理，旨在通过专业判断创造未来价值。</p>
+                </div>
+                <div class="bg-white p-8 rounded-xl shadow-md border border-gray-100 text-center">
+                    <div class="text-5xl mb-4">🧾</div>
+                    <h3 class="text-2xl font-bold mb-2 text-[#2c3e50]">CPA (注册会计师)</h3>
+                    <p class="text-lg font-semibold mb-4">财务报告的守护者</p>
+                    <span class="inline-block bg-[#fdebd0] text-[#785a28] rounded-full px-4 py-1 text-sm font-semibold mb-2">#回顾性</span>
+                    <p class="text-[#606f7b]">专注于财务报告、审计和税务合规，确保财务信息的准确性、透明度和合法性。</p>
+                </div>
+            </div>
+        </section>
+
+        <section id="deep-dive" class="mb-16 bg-white rounded-2xl shadow-lg p-6 md:p-10">
+            <h2 class="text-2xl md:text-3xl font-bold text-center mb-8">多维度深度对比</h2>
+            <div class="border-b border-gray-200 mb-6">
+                <nav class="flex justify-center -mb-px space-x-4 md:space-x-8" aria-label="Tabs">
+                    <button class="tab-btn active whitespace-nowrap py-4 px-1 border-b-2 font-medium text-lg" data-tab="careers">职业领域</button>
+                    <button class="tab-btn whitespace-nowrap py-4 px-1 border-b-2 font-medium text-lg" data-tab="salary">薪酬潜力</button>
+                    <button class="tab-btn whitespace-nowrap py-4 px-1 border-b-2 font-medium text-lg" data-tab="effort">投入与难度</button>
+                    <button class="tab-btn whitespace-nowrap py-4 px-1 border-b-2 font-medium text-lg" data-tab="knowledge">知识体系</button>
+                </nav>
+            </div>
+            
+            <div id="tab-content" class="fade-in">
+                <!-- Career Content -->
+                <div id="careers-content">
+                    <p class="text-center text-[#606f7b] mb-8 max-w-3xl mx-auto">两种证书导向不同的职业生态。CFA是通往投资银行、资产管理等前台投资角色的快车道，而CPA则主导会计师事务所和企业财务部门。</p>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                        <div>
+                            <h4 class="text-xl font-bold mb-4 text-[#c0a062]">CFA 典型职业路径</h4>
+                            <ul class="space-y-3 text-[#2c3e50]">
+                                <li class="flex items-start"><span class="mr-3 mt-1 text-[#c0a062]">▶</span> 股权研究分析师</li>
+                                <li class="flex items-start"><span class="mr-3 mt-1 text-[#c0a062]">▶</span> 投资组合经理 / 基金经理</li>
+                                <li class="flex items-start"><span class="mr-3 mt-1 text-[#c0a062]">▶</span> 投资银行家</li>
+                                <li class="flex items-start"><span class="mr-3 mt-1 text-[#c0a062]">▶</span> 财富管理顾问</li>
+                                <li class="flex items-start"><span class="mr-3 mt-1 text-[#c0a062]">▶</span> 风险分析师</li>
+                                <li class="flex items-start"><span class="mr-3 mt-1 font-bold text-[#c0a062]">▲</span> 最终目标: 首席投资官 (CIO)</li>
+                            </ul>
+                        </div>
+                        <div>
+                            <h4 class="text-xl font-bold mb-4 text-[#2c3e50]">CPA 典型职业路径</h4>
+                            <ul class="space-y-3 text-[#2c3e50]">
+                                <li class="flex items-start"><span class="mr-3 mt-1 text-[#785a28]">▶</span> 审计师 / 公共会计师</li>
+                                <li class="flex items-start"><span class="mr-3 mt-1 text-[#785a28]">▶</span> 税务会计师</li>
+                                <li class="flex items-start"><span class="mr-3 mt-1 text-[#785a28]">▶</span> 企业财务分析师</li>
+                                <li class="flex items-start"><span class="mr-3 mt-1 text-[#785a28]">▶</span> 财务报告专家</li>
+                                <li class="flex items-start"><span class="mr-3 mt-1 text-[#785a28]">▶</span> 合规经理</li>
+                                <li class="flex items-start"><span class="mr-3 mt-1 font-bold text-[#785a28]">▲</span> 最终目标: 首席财务官 (CFO)</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <div class="mt-12 p-6 bg-gray-50 rounded-lg shadow-inner">
+                        <h4 class="text-xl font-bold mb-4 text-[#2c3e50]">✨职业路径灵感✨</h4>
+                        <p class="text-[#606f7b] mb-4">输入一个你感兴趣的金融领域（例如：投资分析、风险管理、企业财务等），让AI为你生成CFA和CPA相关的职业角色建议。</p>
+                        <div class="flex flex-col sm:flex-row gap-4 mb-4">
+                            <input type="text" id="career-interest-input" placeholder="例如：投资分析" class="flex-grow p-3 border border-gray-300 rounded-md focus:ring-2 focus:ring-[#c0a062] focus:border-transparent">
+                            <button id="generate-career-btn" class="bg-[#c0a062] text-white px-6 py-3 rounded-md shadow hover:bg-[#a98b54] transition-colors flex items-center justify-center">
+                                生成职业建议
+                                <span id="career-spinner" class="loading-spinner hidden ml-2"></span>
+                            </button>
+                        </div>
+                        <div id="career-suggestions-output" class="bg-white p-4 rounded-md border border-gray-200 min-h-[100px] text-gray-700 whitespace-pre-wrap">
+                            输入你的兴趣，获取AI生成的职业路径灵感。
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Salary Content -->
+                <div id="salary-content" class="hidden">
+                    <p class="text-center text-[#606f7b] mb-8 max-w-3xl mx-auto">CFA证书在投资领域的专业性，直接体现在其更高的薪酬潜力和高级职位的可及性上。数据显示，CFA持证人在职业生涯中的收入水平显著高于CPA。</p>
+                    <div class="text-center mb-6">
+                        <button id="avg-salary-btn" class="bg-[#c0a062] text-white px-4 py-2 rounded-md shadow hover:bg-[#a98b54] transition-colors">平均薪酬对比</button>
+                        <button id="senior-salary-btn" class="bg-gray-200 text-[#2c3e50] px-4 py-2 rounded-md hover:bg-gray-300 transition-colors">高级职位薪酬</button>
+                    </div>
+                    <div class="chart-container">
+                        <canvas id="salaryChart"></canvas>
+                    </div>
+                </div>
+
+                <!-- Effort Content -->
+                <div id="effort-content" class="hidden">
+                    <p class="text-center text-[#606f7b] mb-8 max-w-3xl mx-auto">获得任何一项顶级认证都需要巨大的投入。CFA以其深度和广度要求更长的学习时间，但其全球统一的标准和灵活的报考条件为大学生提供了便利。</p>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
+                        <div class="chart-container h-64 md:h-80">
+                            <canvas id="effortChart"></canvas>
+                        </div>
+                        <div class="space-y-4">
+                            <div class="bg-gray-100 p-4 rounded-lg text-center">
+                                <p class="text-lg font-medium text-[#606f7b]">CFA 一级通过率</p>
+                                <p class="text-3xl font-bold text-[#c0a062]">&lt; 50%</p>
+                            </div>
+                            <div class="bg-gray-100 p-4 rounded-lg text-center">
+                                <p class="text-lg font-medium text-[#606f7b]">CPA 单科通过率</p>
+                                <p class="text-3xl font-bold text-[#2c3e50]">~45-55%</p>
+                            </div>
+                             <div class="bg-gray-100 p-4 rounded-lg text-center">
+                                <p class="text-lg font-medium text-[#606f7b]">大学生可报考</p>
+                                <p class="text-2xl font-bold text-[#c0a062]">CFA (大二即可)</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Knowledge Content -->
+                <div id="knowledge-content" class="hidden">
+                     <p class="text-center text-[#606f7b] mb-8 max-w-3xl mx-auto">CFA课程深入投资核心，而CPA则广泛覆盖会计商业法规。选择哪个证书，取决于你想成为哪一类问题的专家。</p>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                        <div>
+                            <h4 class="text-xl font-bold mb-4 text-[#c0a062]">CFA 知识体系核心</h4>
+                            <ul class="space-y-2 text-[#2c3e50]">
+                                <li class="flex items-center"><span class="text-lg mr-2">💎</span> 投资工具与资产类别</li>
+                                <li class="flex items-center"><span class="text-lg mr-2">💎</span> 股票、固收、衍生品分析</li>
+                                <li class="flex items-center"><span class="text-lg mr-2">💎</span> 另类投资（私募、对冲基金）</li>
+                                <li class="flex items-center"><span class="text-lg mr-2">💎</span> 投资组合管理与财富规划</li>
+                                <li class="flex items-center"><span class="text-lg mr-2">💎</span> 道德与专业标准</li>
+                                <li class="flex items-center"><span class="text-lg mr-2">💎</span> 实践技能模块 (PSMs)</li>
+                            </ul>
+                        </div>
+                        <div>
+                            <h4 class="text-xl font-bold mb-4 text-[#2c3e50]">CPA 知识体系核心</h4>
+                             <ul class="space-y-2 text-[#2c3e50]">
+                                <li class="flex items-center"><span class="text-lg mr-2">📚</span> 审计与鉴证</li>
+                                <li class="flex items-center"><span class="text-lg mr-2">📚</span> 财务会计与报告 (U.S. GAAP)</li>
+                                <li class="flex items-center"><span class="text-lg mr-2">📚</span> 法规 (美国税法等)</li>
+                                <li class="flex items-center"><span class="text-lg mr-2">📚</span> 商业环境与概念</li>
+                                <li class="flex items-center"><span class="text-lg mr-2">📚</span> 州特定执业要求</li>
+                                <li class="flex items-center"><span class="text-lg mr-2">📚</span> 信息技术与数据分析</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="why-cfa" class="mb-12">
+             <h2 class="text-2xl md:text-3xl font-bold text-center mb-2">为何CFA是投资领域的更优选？</h2>
+             <p class="text-center text-lg text-[#606f7b] mb-8">对于立志在投资界大展拳脚的你，CFA提供了四大核心优势。</p>
+             <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+                 <div class="card-advantage bg-white p-6 rounded-xl shadow-md border border-gray-100">
+                     <div class="text-4xl mb-3">🌍</div>
+                     <h4 class="font-bold text-lg mb-2">全球通行证</h4>
+                     <p class="text-sm text-[#606f7b]">CFA是全球投资行业公认的最高标准，为你开启国际职业生涯，连接全球金融精英网络。</p>
+                 </div>
+                  <div class="card-advantage bg-white p-6 rounded-xl shadow-md border border-gray-100">
+                     <div class="text-4xl mb-3">🔑</div>
+                     <h4 class="font-bold text-lg mb-2">顶尖机构敲门砖</h4>
+                     <p class="text-sm text-[#606f7b]">顶级投行、基金公司高度认可CFA价值，将其视为衡量专业能力与职业道德的关键标尺。</p>
+                 </div>
+                 <div class="card-advantage bg-white p-6 rounded-xl shadow-md border border-gray-100">
+                     <div class="text-4xl mb-3">🧠</div>
+                     <h4 class="font-bold text-lg mb-2">赋能实战决策</h4>
+                     <p class="text-sm text-[#606f7b]">课程设计紧贴实战，通过案例分析培养批判性思维和复杂投资问题的解决能力。</p>
+                 </div>
+                 <div class="card-advantage bg-white p-6 rounded-xl shadow-md border border-gray-100">
+                     <div class="text-4xl mb-3">🎓</div>
+                     <h4 class="font-bold text-lg mb-2">赢在大学起点</h4>
+                     <p class="text-sm text-[#606f7b]">大二下即可报考，助你实现学业与职业的无缝衔接，抢占就业先机。</p>
+                 </div>
+             </div>
+        </section>
+        
+        <section id="study-assistant" class="mb-12 bg-white rounded-2xl shadow-lg p-6 md:p-10">
+            <h2 class="text-2xl md:text-3xl font-bold text-center mb-4">✨智能备考助手✨</h2>
+            <p class="text-center text-[#606f7b] mb-8 max-w-3xl mx-auto">为你的CFA一级备考量身定制高层次学习计划。输入你的学习时间与目标，让AI为你规划。</p>
+            <div class="max-w-xl mx-auto">
+                <div class="mb-4">
+                    <label for="weekly-hours-input" class="block text-sm font-medium text-gray-700 mb-2">每周可学习小时数:</label>
+                    <input type="number" id="weekly-hours-input" min="1" max="60" value="15" class="w-full p-3 border border-gray-300 rounded-md focus:ring-2 focus:ring-[#c0a062] focus:border-transparent">
+                </div>
+                <div class="mb-6">
+                    <label for="exam-date-input" class="block text-sm font-medium text-gray-700 mb-2">目标考试年月 (例如: 2025年11月):</label>
+                    <input type="text" id="exam-date-input" placeholder="例如：2025年11月" class="w-full p-3 border border-gray-300 rounded-md focus:ring-2 focus:ring-[#c0a062] focus:border-transparent">
+                </div>
+                <div class="text-center">
+                    <button id="generate-study-plan-btn" class="bg-[#2c3e50] text-white px-6 py-3 rounded-md shadow hover:bg-[#4a5568] transition-colors flex items-center justify-center mx-auto">
+                        生成学习计划
+                        <span id="study-spinner" class="loading-spinner hidden ml-2"></span>
+                    </button>
+                </div>
+                <div id="study-plan-output" class="bg-gray-50 p-6 rounded-md border border-gray-200 mt-8 min-h-[150px] text-gray-700 whitespace-pre-wrap">
+                    输入你的学习偏好和目标，获取AI生成的学习计划。
+                </div>
+            </div>
+        </section>
+
+        <footer class="text-center mt-16 border-t pt-8">
+            <h3 class="text-xl font-bold">结论与建议</h3>
+            <p class="max-w-3xl mx-auto mt-4 text-[#606f7b]">如果你对投资管理充满热情，渴望在金融市场中扮演积极的战略决策者角色，那么CFA无疑是更值得投入的“长期职业投资”。它的专业深度、全球认可度和高薪潜力，将为你的职业生涯奠定坚实的基础。</p>
+            <a href="https://www.cfainstitute.org" target="_blank" class="mt-6 inline-block bg-[#2c3e50] text-white font-bold py-3 px-8 rounded-lg shadow-lg hover:bg-[#4a5568] transition-all">探索CFA官方网站</a>
+        </footer>
+
+    </div>
+
+    <script>
+    document.addEventListener('DOMContentLoaded', () => {
+
+        const salaryData = {
+            avg: {
+                labels: ['CFA 持证人 (学士学位)', 'CPA 持证人'],
+                data: [162500, 119000],
+                title: '平均年薪对比 (美元)'
+            },
+            senior: {
+                labels: ['首席投资官 (CIO)', '股票投资组合经理', '固收投资组合经理'],
+                data: [334500, 316600, 253250],
+                title: 'CFA 高级职位年薪中位数 (美元)'
+            }
+        };
+
+        const effortData = {
+            labels: ['CFA (总计)', 'CPA (总计)'],
+            hours: [900, 500],
+            costs: [5635, 3000] 
+        };
+
+        let salaryChart, effortChart;
+
+        const chartOptions = (titleText) => ({
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: {
+                    display: false
+                },
+                title: {
+                    display: true,
+                    text: titleText,
+                    font: { size: 16, family: 'Noto Sans SC' },
+                    color: '#2c3e50'
+                },
+                tooltip: {
+                    callbacks: {
+                        label: function(context) {
+                            let label = context.dataset.label || '';
+                            if (label) {
+                                label += ': ';
+                            }
+                            if (context.parsed.y !== null) {
+                                label += new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', minimumFractionDigits: 0 }).format(context.parsed.y);
+                            }
+                            return label;
+                        }
+                    }
+                }
+            },
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    ticks: {
+                        callback: function(value, index, values) {
+                            return '$' + (value / 1000) + 'k';
+                        }
+                    }
+                }
+            }
+        });
+        
+        const horizontalChartOptions = (titleText) => ({
+            indexAxis: 'y',
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: {
+                    display: false,
+                },
+                title: {
+                    display: true,
+                    text: titleText,
+                    font: { size: 14, family: 'Noto Sans SC' },
+                    color: '#2c3e50',
+                    position: 'bottom'
+                },
+                 tooltip: {
+                    callbacks: {
+                        label: function(context) {
+                            let label = context.dataset.label || '';
+                             if (label) {
+                                label += ': ';
+                            }
+                            if (context.parsed.x !== null) {
+                                if (context.dataset.label === '学习小时') {
+                                    label += context.parsed.x + ' 小时';
+                                } else {
+                                     label += new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', minimumFractionDigits: 0 }).format(context.parsed.x);
+                                }
+                            }
+                            return label;
+                        }
+                    }
+                }
+            },
+             scales: {
+                x: {
+                    beginAtZero: true
+                }
+            }
+        });
+
+
+        function createSalaryChart(type) {
+            const ctx = document.getElementById('salaryChart').getContext('2d');
+            const data = salaryData[type];
+
+            if (salaryChart) {
+                salaryChart.destroy();
+            }
+
+            salaryChart = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: data.labels,
+                    datasets: [{
+                        label: '年薪 (USD)',
+                        data: data.data,
+                        backgroundColor: ['#c0a062', '#2c3e50', '#a98b54'],
+                        borderColor: ['#a98b54', '#1e2b37', '#8e7345'],
+                        borderWidth: 1,
+                        borderRadius: 5,
+                    }]
+                },
+                options: chartOptions(data.title)
+            });
+        }
+        
+        function createEffortChart() {
+            const ctx = document.getElementById('effortChart').getContext('2d');
+            if (effortChart) {
+                effortChart.destroy();
+            }
+            effortChart = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: effortData.labels,
+                    datasets: [
+                        {
+                            label: '学习小时',
+                            data: effortData.hours,
+                            backgroundColor: '#c0a062',
+                            borderColor: '#a98b54',
+                            borderWidth: 1
+                        },
+                        {
+                            label: '平均花费 (USD)',
+                            data: effortData.costs,
+                            backgroundColor: '#2c3e50',
+                            borderColor: '#1e2b37',
+                            borderWidth: 1
+                        }
+                    ]
+                },
+                options: horizontalChartOptions('预计学习时间与平均花费对比')
+            });
+        }
+
+
+        const tabs = document.querySelectorAll('.tab-btn');
+        const tabContents = {
+            careers: document.getElementById('careers-content'),
+            salary: document.getElementById('salary-content'),
+            effort: document.getElementById('effort-content'),
+            knowledge: document.getElementById('knowledge-content')
+        };
+        const tabContentContainer = document.getElementById('tab-content');
+
+        tabs.forEach(tab => {
+            tab.addEventListener('click', () => {
+                const tabName = tab.dataset.tab;
+
+                tabs.forEach(t => t.classList.remove('active'));
+                tab.classList.add('active');
+
+                Object.values(tabContents).forEach(content => {
+                    content.classList.add('hidden');
+                });
+                
+                tabContentContainer.classList.remove('fade-in');
+                void tabContentContainer.offsetWidth; 
+                tabContentContainer.classList.add('fade-in');
+                
+                tabContents[tabName].classList.remove('hidden');
+
+                if (tabName === 'salary' && !salaryChart) {
+                    createSalaryChart('avg');
+                } else if (tabName === 'salary') {
+                    salaryChart.update();
+                }
+
+                if (tabName === 'effort' && !effortChart) {
+                    createEffortChart();
+                } else if (tabName === 'effort') {
+                    effortChart.update();
+                }
+            });
+        });
+
+        document.getElementById('avg-salary-btn').addEventListener('click', () => createSalaryChart('avg'));
+        document.getElementById('senior-salary-btn').addEventListener('click', () => createSalaryChart('senior'));
+
+        createSalaryChart('avg');
+
+        // Gemini API Integration - Career Path Brainstormer
+        const careerInterestInput = document.getElementById('career-interest-input');
+        const generateCareerBtn = document.getElementById('generate-career-btn');
+        const careerSuggestionsOutput = document.getElementById('career-suggestions-output');
+        const careerSpinner = document.getElementById('career-spinner');
+
+        generateCareerBtn.addEventListener('click', async () => {
+            const interest = careerInterestInput.value.trim();
+            if (!interest) {
+                careerSuggestionsOutput.textContent = "请输入你感兴趣的金融领域！";
+                return;
+            }
+
+            careerSuggestionsOutput.textContent = "";
+            careerSpinner.classList.remove('hidden');
+            generateCareerBtn.disabled = true;
+
+            try {
+                let chatHistory = [];
+                const prompt = `给定我对"${interest}"的兴趣，请为CFA持证人和CPA持证人分别推荐3-4个具体的职业角色，并简要解释每个角色的职责以及为什么相关的证书对此有益。请以清晰易读的格式呈现。`;
+                chatHistory.push({ role: "user", parts: [{ text: prompt }] });
+                const payload = { contents: chatHistory };
+                const apiKey = "";
+                const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`;
+
+                const response = await fetch(apiUrl, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+                const result = await response.json();
+
+                if (result.candidates && result.candidates.length > 0 &&
+                    result.candidates[0].content && result.candidates[0].content.parts &&
+                    result.candidates[0].content.parts.length > 0) {
+                    const text = result.candidates[0].content.parts[0].text;
+                    careerSuggestionsOutput.textContent = text;
+                } else {
+                    careerSuggestionsOutput.textContent = "抱歉，未能生成职业建议。请稍后再试。";
+                }
+            } catch (error) {
+                console.error('Error fetching career suggestions:', error);
+                careerSuggestionsOutput.textContent = "生成职业建议时发生错误。请检查网络或稍后再试。";
+            } finally {
+                careerSpinner.classList.add('hidden');
+                generateCareerBtn.disabled = false;
+            }
+        });
+
+        // Gemini API Integration - Study Plan Assistant
+        const weeklyHoursInput = document.getElementById('weekly-hours-input');
+        const examDateInput = document.getElementById('exam-date-input');
+        const generateStudyPlanBtn = document.getElementById('generate-study-plan-btn');
+        const studyPlanOutput = document.getElementById('study-plan-output');
+        const studySpinner = document.getElementById('study-spinner');
+
+        generateStudyPlanBtn.addEventListener('click', async () => {
+            const hours = weeklyHoursInput.value.trim();
+            const examDate = examDateInput.value.trim();
+
+            if (!hours || !examDate) {
+                studyPlanOutput.textContent = "请填写每周学习小时数和目标考试年月！";
+                return;
+            }
+
+            studyPlanOutput.textContent = "";
+            studySpinner.classList.remove('hidden');
+            generateStudyPlanBtn.disabled = true;
+
+            try {
+                let chatHistory = [];
+                const prompt = `我正在准备CFA一级考试。我每周可以学习${hours}小时，并计划在${examDate}参加考试。请为我提供一个高层次的学习计划，包括主要阶段（例如：概念学习、习题练习、总复习），并强调几个需要重点关注的关键主题。请保持内容简洁，适合大学生参考。`;
+                chatHistory.push({ role: "user", parts: [{ text: prompt }] });
+                const payload = { contents: chatHistory };
+                const apiKey = "";
+                const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`;
+
+                const response = await fetch(apiUrl, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+                const result = await response.json();
+
+                if (result.candidates && result.candidates.length > 0 &&
+                    result.candidates[0].content && result.candidates[0].content.parts &&
+                    result.candidates[0].content.parts.length > 0) {
+                    const text = result.candidates[0].content.parts[0].text;
+                    studyPlanOutput.textContent = text;
+                } else {
+                    studyPlanOutput.textContent = "抱歉，未能生成学习计划。请稍后再试。";
+                }
+            } catch (error) {
+                console.error('Error fetching study plan:', error);
+                studyPlanOutput.textContent = "生成学习计划时发生错误。请检查网络或稍后再试。";
+            } finally {
+                studySpinner.classList.add('hidden');
+                generateStudyPlanBtn.disabled = false;
+            }
+        });
+    });
+    </script>
+</body>
+</html>
