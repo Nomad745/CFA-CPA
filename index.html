@@ -483,7 +483,7 @@ if (targetId === 'effort') {
 if (!effortChart || !document.body.contains(effortChart.canvas)) {
 createEffortChart();
 } else {
-effortChart。update();
+effortChart.update();
 }
 }
 }
@@ -492,46 +492,46 @@ effortChart。update();
 
 const initialButton = document.querySelector(`${tabButtonsSelector}[data-tab="${initialActiveId}"], ${tabButtonsSelector}[data-target="${initialActiveId}"]`);
 if (initialButton) {
-initialButton。click();
+initialButton.click();
 }
 }
 
-setupTabs('#deep-dive .tab-btn'， '#tab-content .content-pane'， 'salary');
-setupTabs('#pathways-tabs .tab-btn'， '#pathways-content .content-pane'， 'path-study');
-setupTabs('#work-tabs .tab-btn'， '#work-content .content-pane'， 'work-consulting');
+setupTabs('#deep-dive .tab-btn', '#tab-content .content-pane', 'salary');
+setupTabs('#pathways-tabs .tab-btn', '#pathways-content .content-pane', 'path-study');
+setupTabs('#work-tabs .tab-btn', '#work-content .content-pane', 'work-consulting');
 
-document。getElementById('avg-salary-btn')?.addEventListener('click', () => createSalaryChart('avg'));
-document。getElementById('senior-salary-btn')?.addEventListener('click', () => createSalaryChart('senior'));
+document.getElementById('avg-salary-btn')?.addEventListener('click', () => createSalaryChart('avg'));
+document.getElementById('senior-salary-btn')?.addEventListener('click', () => createSalaryChart('senior'));
 
 const mobileNav = document.getElementById('mobile-nav');
 if (mobileNav) {
-mobileNav。addEventListener('change'， function() {
+mobileNav.addEventListener('change', function() {
 const targetElement = document.querySelector(this.value);
 if (targetElement) {
-targetElement。scrollIntoView({ behavior: 'smooth' });
+targetElement.scrollIntoView({ behavior: 'smooth' });
 }
 });
 }
 
 const observer = new IntersectionObserver((entries) => {
-entries。forEach(entry => {
+entries.forEach(entry => {
 if (entry.isIntersecting) {
 const id = entry.target.getAttribute('id');
-document。querySelectorAll('.nav-link')。forEach(link => {
-link。classList。remove('active');
-if(link。getAttribute('href') === `#${id}`) {
-link。classList。add('active');
+document.querySelectorAll('.nav-link').forEach(link => {
+link.classList.remove('active');
+if(link.getAttribute('href') === `#${id}`) {
+link.classList.add('active');
 }
 });
 if (mobileNav) {
-mobileNav。value = `#${id}`;
+mobileNav.value = `#${id}`;
 }
 }
 });
-}， { rootMargin: "-50% 0px -50% 0px" });
+}, { rootMargin: "-50% 0px -50% 0px" });
 
-document。querySelectorAll('main section')。forEach(section => {
-observer。observe(section);
+document.querySelectorAll('main section').forEach(section => {
+observer.observe(section);
 });
 });
 </script>
